@@ -20,7 +20,7 @@ export default function UspBanner() {
       <div className="relative z-30 max-w-4xl mx-auto">
         <h2 className="text-2xl md:text-4xl font-bold bg-white bg-clip-text text-transparent mb-3 md:mb-4 drop-shadow-lg">We Work Where You Work</h2>
         <p className="text-base md:text-lg text-white mb-4 md:mb-6 drop-shadow">
-          Whether you're using <strong className="text-accent">Klaviyo</strong>, <strong className="text-accent">Omnisend</strong>, <strong className="text-accent">AWeber</strong>, <strong className="text-accent">Attentive</strong>, or <strong className="text-accent">HubSpot</strong> — our team adapts to your stack.
+          Whether you're using <strong className="text-accent">Klaviyo</strong>, <strong className="text-accent">Omnisend</strong>, <strong className="text-accent">AWeber</strong>, <strong className="text-accent">Attentive</strong>, or <strong className="text-accent">HubSpot</strong>: our team adapts to your stack.
         </p>
         <p className="text-sm md:text-md text-white drop-shadow">
           No migrations. No compromises. Just results.

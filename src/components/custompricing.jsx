@@ -1,8 +1,8 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useEffect, useRef, useState } from 'react';
 
 const usps = [
   "Full Email & SMS Channel Management",
@@ -29,57 +29,45 @@ export default function CustomPricing() {
     const carousel = carouselRef.current;
     let scrollInterval;
 
+    const isMobile = () =>
+      typeof window !== 'undefined' &&
+      /iPhone|iPod|Android/i.test(navigator.userAgent) &&
+      window.innerWidth < 768;
+
     const startAutoScroll = () => {
+      stopAutoScroll(); // clear existing first
       scrollInterval = setInterval(() => {
-        if (carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth) {
-          // Reset to beginning when reaching the end
+        if (
+          carousel.scrollLeft >=
+          carousel.scrollWidth - carousel.clientWidth
+        ) {
           carousel.scrollTo({ left: 0, behavior: 'smooth' });
         } else {
           carousel.scrollBy({ left: 2, behavior: 'auto' });
         }
-      }, 30); // Adjust speed as needed
+      }, 30);
     };
 
     const stopAutoScroll = () => {
-      clearInterval(scrollInterval);
+      if (scrollInterval) clearInterval(scrollInterval);
     };
 
-    // Only start auto-scroll on mobile (screen width < 768px)
     const handleResize = () => {
-      if (window.innerWidth < 768) {
+      if (isMobile()) {
         startAutoScroll();
       } else {
         stopAutoScroll();
       }
     };
 
-    // Initial check
+    // Start on mount
     handleResize();
 
-    // Pause on hover/touch for mobile only
-    const handleMouseEnter = () => {
-      if (window.innerWidth < 768) {
-        stopAutoScroll();
-      }
-    };
-
-    const handleMouseLeave = () => {
-      if (window.innerWidth < 768) {
-        startAutoScroll();
-      }
-    };
-
-    const handleTouchStart = () => {
-      if (window.innerWidth < 768) {
-        stopAutoScroll();
-      }
-    };
-
-    const handleTouchEnd = () => {
-      if (window.innerWidth < 768) {
-        startAutoScroll();
-      }
-    };
+    // Pause on interaction
+    const handleMouseEnter = () => isMobile() && stopAutoScroll();
+    const handleMouseLeave = () => isMobile() && startAutoScroll();
+    const handleTouchStart = () => isMobile() && stopAutoScroll();
+    const handleTouchEnd = () => isMobile() && startAutoScroll();
 
     carousel.addEventListener('mouseenter', handleMouseEnter);
     carousel.addEventListener('mouseleave', handleMouseLeave);
@@ -88,7 +76,7 @@ export default function CustomPricing() {
     window.addEventListener('resize', handleResize);
 
     return () => {
-      clearInterval(scrollInterval);
+      stopAutoScroll();
       carousel.removeEventListener('mouseenter', handleMouseEnter);
       carousel.removeEventListener('mouseleave', handleMouseLeave);
       carousel.removeEventListener('touchstart', handleTouchStart);
@@ -108,14 +96,21 @@ export default function CustomPricing() {
           No templates. No guesswork. Just a custom plan made to grow with your brand.
         </p>
 
-        <div 
+        <div
           ref={carouselRef}
-          className={`flex overflow-x-auto scroll-smooth scrollbar-hide touch-pan-x md:grid md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-12 text-left md:overflow-visible px-2 md:px-0 ${mounted ? '' : 'pointer-events-none'}`}
+          className={`flex overflow-x-auto scroll-smooth scrollbar-hide touch-pan-x md:grid md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-12 text-left md:overflow-visible px-2 md:px-0 ${
+            mounted ? '' : 'pointer-events-none'
+          }`}
         >
           {usps.map((point, idx) => (
-            <div key={idx} className="flex items-start gap-1 md:gap-3 bg-card/80 p-6 md:p-5 rounded-2xl shadow-md border border-border min-w-[90px] max-w-[280px] md:min-w-0 md:max-w-none flex-shrink-0 md:flex-shrink h-24 md:h-auto">
+            <div
+              key={idx}
+              className="flex items-start gap-1 md:gap-3 bg-card/80 p-6 md:p-5 rounded-2xl shadow-md border border-border min-w-[90px] max-w-[280px] md:min-w-0 md:max-w-none flex-shrink-0 md:flex-shrink h-24 md:h-auto"
+            >
               <CheckCircle className="text-accent mt-1 flex-shrink-0 w-6 h-6 md:w-4 md:h-4" />
-              <span className="text-foreground font-medium text-md md:text-sm">{point}</span>
+              <span className="text-foreground font-medium text-md md:text-sm">
+                {point}
+              </span>
             </div>
           ))}
         </div>
@@ -124,8 +119,15 @@ export default function CustomPricing() {
           Custom pricing tailored to your goals, channels, and tech stack.
         </p>
         <div className="text-center">
-          <a href="https://calendly.com/clingy-afagency/30min" target="_blank" rel="noopener noreferrer">
-            <Button size="lg" className="text-lg px-8 py-5 fire-gradient text-primary-foreground hover:phoenix-glow-hover font-semibold rounded-full shadow-lg my-2 cursor-pointer">
+          <a
+            href="https://calendly.com/clingy-afagency/30min"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button
+              size="lg"
+              className="text-lg px-8 py-5 fire-gradient text-primary-foreground hover:phoenix-glow-hover font-semibold rounded-full shadow-lg my-2 cursor-pointer"
+            >
               Get Your Custom Quote &rarr;
             </Button>
           </a>

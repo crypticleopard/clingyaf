@@ -31,7 +31,7 @@ export default function ServicesSection() {
       <div className="max-w-5xl mx-auto px-4 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 fire-gradient-text leading-[1.15] pb-1">Retention Marketing That Actually Performs</h2>
         <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-        We design and execute full-funnel retention strategies across email, SMS, WhatsApp, RCS, and push notifications—so your customers don’t just buy once, they stick around. Every message is on-brand, data-backed, and built to convert.
+        We design and execute full-funnel retention strategies across email, SMS, WhatsApp, RCS, and push notifications,so your customers don’t just buy once, they stick around. Every message is on-brand, data-backed, and built to convert.
         </p>
         {/* Custom layout for 3+2 icons, always centered */}
         <div className="flex flex-col items-center gap-4 w-full">
