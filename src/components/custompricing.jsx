@@ -23,67 +23,81 @@ export default function CustomPricing() {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!mounted || !carouselRef.current) return;
+useEffect(() => {
+  if (!mounted || !carouselRef.current) return;
 
-    const carousel = carouselRef.current;
-    let scrollInterval;
+  const carousel = carouselRef.current;
+  let scrollRAF;
+  let scrollInterval;
 
-    const isMobile = () =>
-      typeof window !== 'undefined' &&
-      /iPhone|iPod|Android/i.test(navigator.userAgent) &&
-      window.innerWidth < 768;
+  const isIOS = () =>
+    typeof window !== 'undefined' &&
+    /iPhone|iPad|iPod/.test(navigator.userAgent) &&
+    window.innerWidth < 600;
 
-    const startAutoScroll = () => {
-      stopAutoScroll(); // clear existing first
+  const isMobile = () =>
+    typeof window !== 'undefined' &&
+    window.innerWidth < 600 &&
+    'ontouchstart' in window &&
+    navigator.maxTouchPoints > 0;
+
+  const scrollStep = () => {
+    if (!carousel) return;
+    if (carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth) {
+      carousel.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      carousel.scrollBy({ left: 1, behavior: 'auto' });
+    }
+    scrollRAF = requestAnimationFrame(scrollStep);
+  };
+
+  const startAutoScroll = () => {
+    if (isIOS()) {
+      scrollRAF = requestAnimationFrame(scrollStep);
+    } else {
       scrollInterval = setInterval(() => {
-        if (
-          carousel.scrollLeft >=
-          carousel.scrollWidth - carousel.clientWidth
-        ) {
+        if (carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth) {
           carousel.scrollTo({ left: 0, behavior: 'smooth' });
         } else {
           carousel.scrollBy({ left: 2, behavior: 'auto' });
         }
       }, 30);
-    };
+    }
+  };
 
-    const stopAutoScroll = () => {
-      if (scrollInterval) clearInterval(scrollInterval);
-    };
+  const stopAutoScroll = () => {
+    if (scrollRAF) cancelAnimationFrame(scrollRAF);
+    if (scrollInterval) clearInterval(scrollInterval);
+  };
 
-    const handleResize = () => {
-      if (isMobile()) {
-        startAutoScroll();
-      } else {
-        stopAutoScroll();
-      }
-    };
+  const handleResize = () => {
+    stopAutoScroll();
+    if (isMobile()) startAutoScroll();
+  };
 
-    // Start on mount
-    handleResize();
+  handleResize();
 
-    // Pause on interaction
-    const handleMouseEnter = () => isMobile() && stopAutoScroll();
-    const handleMouseLeave = () => isMobile() && startAutoScroll();
-    const handleTouchStart = () => isMobile() && stopAutoScroll();
-    const handleTouchEnd = () => isMobile() && startAutoScroll();
+  const handleMouseEnter = () => isMobile() && stopAutoScroll();
+  const handleMouseLeave = () => isMobile() && startAutoScroll();
+  const handleTouchStart = () => isMobile() && stopAutoScroll();
+  const handleTouchEnd = () => isMobile() && startAutoScroll();
 
-    carousel.addEventListener('mouseenter', handleMouseEnter);
-    carousel.addEventListener('mouseleave', handleMouseLeave);
-    carousel.addEventListener('touchstart', handleTouchStart);
-    carousel.addEventListener('touchend', handleTouchEnd);
-    window.addEventListener('resize', handleResize);
+  carousel.addEventListener('mouseenter', handleMouseEnter);
+  carousel.addEventListener('mouseleave', handleMouseLeave);
+  carousel.addEventListener('touchstart', handleTouchStart);
+  carousel.addEventListener('touchend', handleTouchEnd);
+  window.addEventListener('resize', handleResize);
 
-    return () => {
-      stopAutoScroll();
-      carousel.removeEventListener('mouseenter', handleMouseEnter);
-      carousel.removeEventListener('mouseleave', handleMouseLeave);
-      carousel.removeEventListener('touchstart', handleTouchStart);
-      carousel.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [mounted]);
+  return () => {
+    stopAutoScroll();
+    carousel.removeEventListener('mouseenter', handleMouseEnter);
+    carousel.removeEventListener('mouseleave', handleMouseLeave);
+    carousel.removeEventListener('touchstart', handleTouchStart);
+    carousel.removeEventListener('touchend', handleTouchEnd);
+    window.removeEventListener('resize', handleResize);
+  };
+}, [mounted]);
+
 
   return (
     <section className="relative py-20 px-6 md:px-12 text-center bg-gradient-to-br from-background via-card to-background overflow-hidden">
